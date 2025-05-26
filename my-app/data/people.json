@@ -1,0 +1,45 @@
+[
+  {
+    "id": "1",
+    "name": "Coal Dingo",
+    "avatar": "https://i.pravatar.cc/150?img=12",
+    "timestamp": "just now",
+    "content": "How do you stay focused during finals?",
+    "likes": 2,
+    "comments": [
+      {
+        "id": "1-1",
+        "author": "Pigeon Car",
+        "text": "I use the Pomodoro technique!",
+        "timestamp": "2 min ago"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Pigeon Car",
+    "avatar": "https://i.pravatar.cc/150?img=3",
+    "timestamp": "3 hrs ago",
+    "content": "What are your favorite study playlists?",
+    "likes": 12,
+    "comments": []
+  },
+  {
+    "id": "3",
+    "name": "Pigeon Car",
+    "avatar": "https://i.pravatar.cc/150?img=5",
+    "timestamp": "1 hr ago",
+    "content": "I found Pomodoro technique super useful!",
+    "likes": 8,
+    "comments": []
+  },
+  {
+    "id": "4",
+    "name": "Pigeon Car",
+    "avatar": "https://i.pravatar.cc/150?img=8",
+    "timestamp": "2 min ago",
+    "content": "Anyone tried meditation before an exam?",
+    "likes": 5,
+    "comments": []
+  }
+]
