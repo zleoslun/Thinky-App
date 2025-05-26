@@ -25,7 +25,7 @@ export default function TabLayout() {
             style={styles.avatar}
           />
         </TouchableOpacity>
-        <Text style={styles.title}>Wellness Hub</Text>
+        <Text style={styles.title}>THINKY</Text>
         <View>
             <Ionicons
               name="notifications-outline"
