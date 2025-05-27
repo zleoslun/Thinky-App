@@ -1,20 +1,13 @@
 // app/(tabs)/_layout.tsx
 import React from 'react';
 import {
-  SafeAreaView,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
+  SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet, Platform
 } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
 import { Ionicons, Entypo, FontAwesome5 } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const router = useRouter();
-
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* HEADER */}
@@ -26,17 +19,14 @@ export default function TabLayout() {
           />
         </TouchableOpacity>
         <Text style={styles.title}>THINKY</Text>
-        <View>
-            <Ionicons
-              name="notifications-outline"
-              size={24}
-              color="#000"
-              onPress={() => router.push('/notifications')}
-            />
+        <TouchableOpacity onPress={() => router.push('/notifications')}>
+          <View>
+            <Ionicons name="notifications-outline" size={24} color="#000" />
             <View style={styles.badge}>
               <Text style={styles.badgeText}>3</Text>
             </View>
-        </View>
+          </View>
+        </TouchableOpacity>
       </View>
 
       {/* BOTTOM TABS */}
@@ -44,8 +34,6 @@ export default function TabLayout() {
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarShowLabel: false,
-
-          // Style della barra
           tabBarStyle: {
             position: 'absolute',
             bottom: 0,
@@ -60,13 +48,6 @@ export default function TabLayout() {
             borderTopWidth: 1,
             borderTopColor: '#eaeaea',
           },
-
-          // NASCONDI SOLO L’ITEM “explore” filtrando per route.name
-          tabBarItemStyle: {
-            display: route.name === 'explore' ? 'none' : 'flex',
-          },
-
-          // Icone degli altri tab
           tabBarIcon: ({ focused }) => {
             const color = focused ? '#FFA037' : '#CCC';
             const size = 28;
@@ -74,9 +55,7 @@ export default function TabLayout() {
               case 'index':
                 return <Entypo name="home" size={size} color={color} />;
               case 'journal':
-                return (
-                  <Entypo name="text-document" size={size} color={color} />
-                );
+                return <Entypo name="text-document" size={size} color={color} />;
               case 'cards':
                 return <FontAwesome5 name="id-card" size={size} color={color} />;
               case 'people':
@@ -90,8 +69,7 @@ export default function TabLayout() {
         <Tabs.Screen name="index" />
         <Tabs.Screen name="journal" />
         <Tabs.Screen name="cards" />
-        <Tabs.Screen name="people" />
-        {/* Non serve inserire esplicitamente <Tabs.Screen name="explore" /> */}
+        <Tabs.Screen name="people/index" options={{ title: 'People' }} />
       </Tabs>
     </SafeAreaView>
   );

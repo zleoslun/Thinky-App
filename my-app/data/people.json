@@ -1,7 +1,7 @@
 [
   {
     "id": "1",
-    "name": "Coal Dingo",
+    "name": "Grayson Robinson",
     "avatar": "https://i.pravatar.cc/150?img=12",
     "timestamp": "just now",
     "content": "How do you stay focused during finals?",
@@ -13,33 +13,104 @@
         "text": "I use the Pomodoro technique!",
         "timestamp": "2 min ago"
       }
-    ]
+    ],
+    "topics": ["All", "Study Tips", "Exam Stress", "Time Management"]
   },
   {
     "id": "2",
-    "name": "Pigeon Car",
+    "name": "Levi Murphy",
     "avatar": "https://i.pravatar.cc/150?img=3",
     "timestamp": "3 hrs ago",
     "content": "What are your favorite study playlists?",
     "likes": 12,
-    "comments": []
+    "comments": [],
+    "topics": ["All", "Study Tips", "Mindful Breaks"]
   },
   {
     "id": "3",
-    "name": "Pigeon Car",
+    "name": "Dahlia Scott",
     "avatar": "https://i.pravatar.cc/150?img=5",
     "timestamp": "1 hr ago",
     "content": "I found Pomodoro technique super useful!",
     "likes": 8,
-    "comments": []
+    "comments": [],
+    "topics": ["All", "Study Tips", "Time Management"]
   },
   {
     "id": "4",
-    "name": "Pigeon Car",
+    "name": "Timothy Santos",
     "avatar": "https://i.pravatar.cc/150?img=8",
     "timestamp": "2 min ago",
     "content": "Anyone tried meditation before an exam?",
     "likes": 5,
-    "comments": []
+    "comments": [],
+    "topics": ["All", "Mindful Breaks", "Exam Stress"]
+  },
+  {
+    "id": "5",
+    "name": "Serena Knight",
+    "avatar": "https://i.pravatar.cc/150?img=16",
+    "timestamp": "10 min ago",
+    "content": "Does anyone have tips for managing time effectively?",
+    "likes": 4,
+    "comments": [
+      {
+        "id": "5-1",
+        "author": "Grayson Robinson",
+        "text": "I block out distractions with noise-cancelling headphones.",
+        "timestamp": "5 min ago"
+      }
+    ],
+    "topics": ["All", "Time Management", "Study Tips"]
+  },
+  {
+    "id": "6",
+    "name": "Oliver Ford",
+    "avatar": "https://i.pravatar.cc/150?img=22",
+    "timestamp": "Yesterday",
+    "content": "Study group this weekend?",
+    "likes": 7,
+    "comments": [
+      {
+        "id": "6-1",
+        "author": "Dahlia Scott",
+        "text": "Count me in!",
+        "timestamp": "23 hrs ago"
+      },
+      {
+        "id": "6-2",
+        "author": "Levi Murphy",
+        "text": "What time works best?",
+        "timestamp": "22 hrs ago"
+      }
+    ],
+    "topics": ["All", "Study Tips", "Self-Care Strategies"]
+  },
+  {
+    "id": "7",
+    "name": "Ava Patel",
+    "avatar": "https://i.pravatar.cc/150?img=30",
+    "timestamp": "5 days ago",
+    "content": "Remember to take breaks!",
+    "likes": 15,
+    "comments": [],
+    "topics": ["All", "Mindful Breaks", "Self-Care Strategies"]
+  },
+  {
+    "id": "8",
+    "name": "Mason Lee",
+    "avatar": "https://i.pravatar.cc/150?img=45",
+    "timestamp": "2 days ago",
+    "content": "Any book recommendations for data structures?",
+    "likes": 3,
+    "comments": [
+      {
+        "id": "8-1",
+        "author": "Ava Patel",
+        "text": "Algorithms Unlocked by Cormen is great!",
+        "timestamp": "1 day ago"
+      }
+    ],
+    "topics": ["All", "Study Tips"]
   }
 ]
