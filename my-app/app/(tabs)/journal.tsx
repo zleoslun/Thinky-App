@@ -186,19 +186,19 @@ export default function JournalScreen() {
               onPress={() => {
                 switch (session.title) {
                   case '5-min Guided Breathing':
-                    router.push('/journal_breathing');
+                    router.push('/journal/breathing');
                     break;
                   case 'Stretch Routine':
-                    router.push('/journal_stretch');
+                    router.push('/journal/stretch');
                     break;
                   case 'Gratitude Check-In':
-                    router.push('/journal_gratitude');
+                    router.push('/journal/gratitude');
                     break;
                   case 'Posture Reset Reminder':
-                    router.push('/journal_posture');
+                    router.push('/journal/posture');
                     break;
                   case 'Motivational Quote Drop':
-                    router.push('/journal_quote');
+                    router.push('/journal/quote');
                     break;
                   default:
                     handlePress(session.primary);
