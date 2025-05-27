@@ -1,13 +1,6 @@
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-const buttonStyle = {
-  backgroundColor: '#ff9a47',
-  paddingVertical: 14,
-  paddingHorizontal: 24,
-  borderRadius: 12,
-  alignItems: 'center',
-};
+import { useRouter } from 'expo-router';
 
 const sessionCardStyle = {
   width: '90%',
@@ -68,6 +61,8 @@ const sessionSeparator = {
 };
 
 export default function JournalScreen() {
+  const router = useRouter();
+
   const handlePress = (action: string) => {
     Alert.alert(action, `You pressed ${action}`);
   };
@@ -80,7 +75,7 @@ export default function JournalScreen() {
   };
 
   const handleJournalPrompt = () => {
-    Alert.alert("Journal Prompt", "What is one thing you are grateful for today?", [
+    Alert.alert("Journal Prompt", undefined, [
       { text: "Cancel", style: "cancel" },
       { text: "OK", onPress: () => {} },
     ]);
@@ -188,7 +183,27 @@ export default function JournalScreen() {
           <View style={{ flexDirection: 'row', gap: 16 }}>
             <TouchableOpacity
               style={buttonPrimary}
-              onPress={() => handlePress(session.primary)}
+              onPress={() => {
+                switch (session.title) {
+                  case '5-min Guided Breathing':
+                    router.push('/journal_breathing');
+                    break;
+                  case 'Stretch Routine':
+                    router.push('/journal_stretch');
+                    break;
+                  case 'Gratitude Check-In':
+                    router.push('/journal_gratitude');
+                    break;
+                  case 'Posture Reset Reminder':
+                    router.push('/journal_posture');
+                    break;
+                  case 'Motivational Quote Drop':
+                    router.push('/journal_quote');
+                    break;
+                  default:
+                    handlePress(session.primary);
+                }
+              }}
             >
               <Text style={buttonTextPrimary}>{session.primary}</Text>
             </TouchableOpacity>
