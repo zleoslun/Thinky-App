@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+// app/(tabs)/people/index.tsx
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,8 +11,13 @@ import {
   ListRenderItem,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
-import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  Feather,
+} from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useFocusEffect } from 'expo-router';
 import peopleJson from '../../../data/people.json';
@@ -31,6 +37,7 @@ interface Person {
   likes: number;
   comments: Comment[];
   topics: string[];
+  isExtra?: boolean;
 }
 
 const FILTERS = [
@@ -44,13 +51,27 @@ const FILTERS = [
 
 export default function PeopleScreen() {
   const router = useRouter();
+
+  useEffect(() => {
+    (async () => {
+      const stored = await AsyncStorage.getItem('likedIds')
+      if (stored) {
+        try {
+          const arr: string[] = JSON.parse(stored)
+          setLikedIds(new Set(arr))
+        } catch {}
+      }
+    })()
+  }, [])
+
   const [data, setData] = useState<Person[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [openCommentsFor, setOpenCommentsFor] = useState<Set<string>>(new Set());
   const [newComments, setNewComments] = useState<Record<string, string>>({});
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
 
-  // carica i post statici + quelli creati in add
+  
+
   const loadData = async () => {
     const base = await Promise.all(
       (peopleJson as Person[]).map(async post => {
@@ -63,8 +84,27 @@ export default function PeopleScreen() {
         }
       })
     );
-    const extra = await AsyncStorage.getItem('newComments');
-    const extras: Person[] = extra ? JSON.parse(extra) : [];
+    const raw = await AsyncStorage.getItem('newComments');
+    const commentsOnly = raw
+      ? JSON.parse(raw) as Array<{
+          id: string;
+          author: string;
+          text: string;
+          timestamp: string;
+          topics: string[];
+        }>
+      : [];
+    const extras: Person[] = commentsOnly.map(c => ({
+      id:        c.id,
+      name:      c.author,
+      avatar:    'https://i.pravatar.cc/150?img=4',
+      timestamp: c.timestamp,
+      content:   c.text,
+      likes:     0,
+      comments:  [],
+      topics:    c.topics || [],
+      isExtra:   true,
+    }));
     setData([...extras, ...base]);
   };
 
@@ -74,17 +114,23 @@ export default function PeopleScreen() {
     }, [selectedFilter])
   );
 
-  const onToggleLike = (postId: string) => {
+  const onToggleLike = async (postId: string) => {
     setData(prev =>
-      prev.map(post => {
-        if (post.id !== postId) return post;
-        const liked = likedIds.has(postId);
-        return {
-          ...post,
-          likes: liked ? post.likes - 1 : post.likes + 1,
-        };
-      })
+      prev.map(post =>
+        post.id !== postId
+          ? post
+          : {
+              ...post,
+              likes: likedIds.has(postId)
+                ? post.likes - 1
+                : post.likes + 1,
+            }
+      )
     );
+    const next = new Set(likedIds);
+    if (next.has(postId)) next.delete(postId);
+    else next.add(postId);
+    await AsyncStorage.setItem('likedIds', JSON.stringify(Array.from(next)));
     setLikedIds(prev => {
       const next = new Set(prev);
       next.has(postId) ? next.delete(postId) : next.add(postId);
@@ -103,16 +149,22 @@ export default function PeopleScreen() {
   const addComment = async (postId: string) => {
     const text = newComments[postId]?.trim();
     if (!text) return;
-    const updated = data.map(post => {
-      if (post.id !== postId) return post;
-      const c: Comment = {
-        id: `${postId}-${post.comments.length + 1}`,
-        author: 'You',
-        text,
-        timestamp: 'just now',
-      };
-      return { ...post, comments: [...post.comments, c] };
-    });
+    const updated = data.map(post =>
+      post.id !== postId
+        ? post
+        : {
+            ...post,
+            comments: [
+              ...post.comments,
+              {
+                id: `${postId}-${post.comments.length + 1}`,
+                author: 'You',
+                text,
+                timestamp: 'just now',
+              },
+            ],
+          }
+    );
     setData(updated);
     setNewComments(prev => ({ ...prev, [postId]: '' }));
     await AsyncStorage.setItem(
@@ -121,8 +173,54 @@ export default function PeopleScreen() {
     );
   };
 
+  const confirmDeleteExtra = (id: string) => {
+    Alert.alert(
+      'Delete post?',
+      'Are you sure you want to delete this post?',
+      [
+        { text: 'No', style: 'cancel' },
+        { text: 'Yes', onPress: () => deleteExtra(id) },
+      ]
+    );
+  };
+  const deleteExtra = async (id: string) => {
+    const raw = await AsyncStorage.getItem('newComments');
+    const arr = raw ? JSON.parse(raw) : [];
+    const filtered = (arr as any[]).filter(c => c.id !== id);
+    await AsyncStorage.setItem('newComments', JSON.stringify(filtered));
+    loadData();
+  };
+
+  const confirmDeleteReply = (postId: string, commentId: string) => {
+    Alert.alert(
+      'Delete comment?',
+      'Are you sure you want to delete this comment?',
+      [
+        { text: 'No', style: 'cancel' },
+        { text: 'Yes', onPress: () => deleteReply(postId, commentId) },
+      ]
+    );
+  };
+  const deleteReply = async (postId: string, commentId: string) => {
+    const updated = data.map(post =>
+      post.id !== postId
+        ? post
+        : {
+            ...post,
+            comments: post.comments.filter(c => c.id !== commentId),
+          }
+    );
+    setData(updated);
+    await AsyncStorage.setItem(
+      `comments-${postId}`,
+      JSON.stringify(updated.find(p => p.id === postId)!.comments)
+    );
+  };
+
   const filtered = data.filter(p =>
-    selectedFilter === 'All' ? true : p.topics.includes(selectedFilter)
+    selectedFilter === 'All'
+      ? true
+      : p.topics.includes(selectedFilter)
   );
 
   const renderItem: ListRenderItem<Person> = ({ item }) => {
@@ -138,31 +236,51 @@ export default function PeopleScreen() {
           </View>
           <Text style={styles.content}>{item.content}</Text>
           <View style={styles.footer}>
-            <TouchableOpacity
-              onPress={() => onToggleLike(item.id)}
-              style={styles.iconWithText}
-            >
-              <MaterialCommunityIcons
-                name={liked ? 'heart' : 'heart-outline'}
-                size={20}
-                color={liked ? '#e74c3c' : '#888'}
-              />
-              <Text style={styles.footerText}>{item.likes}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => toggleComments(item.id)}
-              style={styles.iconWithText}
-            >
-              <Feather
-                name="message-circle"
-                size={20}
-                color={isOpen ? '#FFA037' : '#888'}
-              />
-              <Text style={styles.footerText}>{item.comments.length}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <MaterialCommunityIcons name="share" size={20} color="#888" />
-            </TouchableOpacity>
+            <View style={styles.leftIcons}>
+              <TouchableOpacity
+                onPress={() => onToggleLike(item.id)}
+                style={styles.iconWithText}
+              >
+                <MaterialCommunityIcons
+                  name={liked ? 'heart' : 'heart-outline'}
+                  size={20}
+                  color={liked ? '#e74c3c' : '#888'}
+                />
+                <Text style={styles.footerText}>{item.likes}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => toggleComments(item.id)}
+                style={styles.iconWithText}
+              >
+                <Feather
+                  name="message-circle"
+                  size={20}
+                  color={isOpen ? '#FFA037' : '#888'}
+                />
+                <Text style={styles.footerText}>
+                  {item.comments?.length ?? 0}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <MaterialCommunityIcons
+                  name="share"
+                  size={20}
+                  color="#888"
+                />
+              </TouchableOpacity>
+            </View>
+            {item.isExtra && (
+              <TouchableOpacity
+                onPress={() => confirmDeleteExtra(item.id)}
+                style={styles.trashIcon}
+              >
+                <MaterialCommunityIcons
+                  name="delete-outline"
+                  size={20}
+                  color="#888"
+                />
+              </TouchableOpacity>
+            )}
           </View>
           {isOpen && (
             <View style={styles.commentsContainer}>
@@ -171,6 +289,20 @@ export default function PeopleScreen() {
                   <Text style={styles.commentAuthor}>{c.author}</Text>
                   <Text style={styles.commentText}>{c.text}</Text>
                   <Text style={styles.commentTime}>{c.timestamp}</Text>
+                  {c.author === 'You' && (
+                    <TouchableOpacity
+                      onPress={() =>
+                        confirmDeleteReply(item.id, c.id)
+                      }
+                      style={styles.replyTrash}
+                    >
+                      <MaterialCommunityIcons
+                        name="trash-can-outline"
+                        size={16}
+                        color="#888"
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
               ))}
               <View style={styles.addCommentRow}>
@@ -179,10 +311,16 @@ export default function PeopleScreen() {
                   placeholder="Write a comment..."
                   value={newComments[item.id] || ''}
                   onChangeText={t =>
-                    setNewComments(prev => ({ ...prev, [item.id]: t }))
+                    setNewComments(prev => ({
+                      ...prev,
+                      [item.id]: t,
+                    }))
                   }
                 />
-                <TouchableOpacity onPress={() => addComment(item.id)}>
+                <TouchableOpacity
+                  style={styles.sendButton}
+                  onPress={() => addComment(item.id)}
+                >
                   <Ionicons name="send" size={20} color="#FFA037" />
                 </TouchableOpacity>
               </View>
@@ -195,48 +333,50 @@ export default function PeopleScreen() {
 
   return (
     <View style={styles.vertical}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filterBar}
-      >
-        {FILTERS.map(filter => (
-          <TouchableOpacity
-            key={filter}
-            onPress={() => setSelectedFilter(filter)}
-            style={[
-              styles.filterButton,
-              selectedFilter === filter && styles.filterButtonActive,
-            ]}
-          >
-            <Text
+      <Text style={styles.subtitle}>Wellness Hub</Text>
+      <View style={styles.filterContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterBar}
+        >
+          {FILTERS.map(filter => (
+            <TouchableOpacity
+              key={filter}
+              onPress={() => setSelectedFilter(filter)}
               style={[
-                styles.filterText,
-                selectedFilter === filter && styles.filterTextActive,
+                styles.filterButton,
+                selectedFilter === filter && styles.filterButtonActive,
               ]}
             >
-              {filter}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
+              <Text
+                style={[
+                  styles.filterText,
+                  selectedFilter === filter && styles.filterTextActive,
+                ]}
+              >
+                {filter}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
       <FlatList<Person>
         style={styles.verticalChat}
         data={filtered}
         keyExtractor={item => item.id}
         renderItem={renderItem}
         contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: 'flex-start',
-          padding: 16,
+          paddingHorizontal: 16,
           paddingBottom: Platform.OS === 'ios' ? 120 : 110,
+          marginTop: 12,
         }}
       />
-
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => router.push({ pathname: '/people/add' })}
+        onPress={() =>
+          router.push({ pathname: '/people/add' })
+        }
       >
         <View style={styles.fabInner}>
           <Ionicons name="pencil" size={24} color="#fff" />
@@ -247,29 +387,27 @@ export default function PeopleScreen() {
 }
 
 const styles = StyleSheet.create({
-  vertical: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  verticalChat: {
-    display: 'flex',
-    flexDirection: 'column',
-    paddingTop: 10,
+  vertical: { flex: 1, backgroundColor: '#fff', },
+
+  subtitle: {fontSize: 30, fontWeight: 600, padding: 16},
+
+  filterContainer: {
+    height: 60,
+    justifyContent: 'center',
+    paddingBottom: 16
   },
   filterBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 16,
-    maxHeight: 60,
+    paddingVertical: 8,
+    alignItems: 'center',
   },
   filterButton: {
     height: 36,
     paddingHorizontal: 16,
     justifyContent: 'center',
-    marginRight: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#eee',
     borderRadius: 12,
+    marginRight: 8,
   },
   filterButtonActive: {
     backgroundColor: '#FFA037',
@@ -283,11 +421,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
+  verticalChat: { flex: 1 },
+
   card: {
     flexDirection: 'row',
     marginBottom: 24,
     borderBottomWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#eee',
     paddingBottom: 10,
   },
   avatar: {
@@ -295,49 +435,49 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 22,
   },
-  body: {
-    flex: 1,
-    marginLeft: 12,
-  },
+  body: { flex: 1, marginLeft: 12 },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 4,
   },
-  name: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  time: {
-    color: '#888',
-    fontSize: 12,
-  },
-  content: {
-    marginBottom: 8,
-    fontSize: 14,
-  },
+  name: { fontWeight: 'bold', fontSize: 16 },
+  time: { color: '#888', fontSize: 12 },
+
+  content: { marginBottom: 8, fontSize: 14 },
+
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  leftIcons: { flexDirection: 'row', alignItems: 'center' },
   iconWithText: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 16,
   },
   footerText: {
     marginLeft: 4,
     color: '#888',
     fontSize: 12,
   },
+  trashIcon: {
+    paddingHorizontal: 8,
+  },
+
   commentsContainer: {
     marginTop: 12,
     borderTopWidth: 1,
     borderTopColor: '#eee',
     paddingTop: 12,
   },
+
   commentCard: {
     marginBottom: 8,
+    position: 'relative',
+    paddingRight: 24,
   },
   commentAuthor: {
     fontWeight: '600',
@@ -350,10 +490,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
   },
+  replyTrash: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    padding: 4,
+  },
+
   addCommentRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 8,
+    position: 'relative',
+    paddingRight: 40,
   },
   input: {
     flex: 1,
@@ -363,6 +512,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     marginRight: 8,
+  },
+  sendButton: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    padding: 8,
   },
 
   fab: {

@@ -31,16 +31,16 @@ export default function AddCommentScreen() {
     );
   };
 
-  const send = async () => {
-    if (!text.trim()) return;
+  const post = async () => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
     const newComment = {
       id: Date.now().toString(),
       author: 'You',
-      text,
+      text: trimmed,
       timestamp: 'just now',
       topics: tags,
     };
-    // recupera array esistente, aggiungi e salva
     const stored = await AsyncStorage.getItem('newComments');
     const arr = stored ? JSON.parse(stored) : [];
     arr.unshift(newComment);
@@ -50,6 +50,7 @@ export default function AddCommentScreen() {
 
   return (
     <View style={styles.container}>
+      {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#000" />
@@ -57,6 +58,7 @@ export default function AddCommentScreen() {
         <Text style={styles.title}>New Comment</Text>
       </View>
 
+      {/* AREA DI TESTO */}
       <TextInput
         style={styles.input}
         placeholder="Write your comment..."
@@ -65,7 +67,8 @@ export default function AddCommentScreen() {
         onChangeText={setText}
       />
 
-      <Text style={styles.label}>Select tags (opt):</Text>
+      {/* SELEZIONE TAG */}
+      <Text style={styles.label}>Select tags (optional):</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -92,12 +95,13 @@ export default function AddCommentScreen() {
         ))}
       </ScrollView>
 
+      {/* AZIONI IN FONDO */}
       <View style={styles.actions}>
         <TouchableOpacity onPress={() => router.back()} style={styles.cancel}>
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={send} style={styles.send}>
-          <Text style={styles.sendText}>Send</Text>
+        <TouchableOpacity onPress={post} style={styles.post}>
+          <Text style={styles.postText}>Post</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -105,16 +109,26 @@ export default function AddCommentScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  container: { flex: 1,
+        padding: 16,
+        backgroundColor: '#fff',
+        paddingBottom: Platform.OS === 'ios' ? 100 : 80
+    },
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
   },
-  title: { flex: 1, textAlign: 'center', fontSize: 18, fontWeight: '600' },
+  title: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
+  },
 
   input: {
-    flex: 1,
+    height: 180,
     textAlignVertical: 'top',
     borderWidth: 1,
     borderColor: '#ddd',
@@ -124,10 +138,17 @@ const styles = StyleSheet.create({
   },
 
   label: { marginBottom: 8, fontSize: 14, fontWeight: '500' },
-  tagsBar: { flexDirection: 'row', paddingBottom: 16 },
+  tagsBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 16,
+    height: 60,
+    marginBottom: 16,      // spazio ridotto prima dei bottoni
+  },
   tagButton: {
+    height: 36,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    justifyContent: 'center',
     backgroundColor: '#f2f2f2',
     borderRadius: 16,
     marginRight: 8,
@@ -139,17 +160,18 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 16,
     borderTopWidth: 1,
     borderColor: '#eee',
+    paddingTop: 12,       // ridotto
   },
-  cancel: { padding: 12 },
+  cancel: { paddingVertical: 8 }, 
   cancelText: { color: '#888', fontSize: 16 },
-  send: {
+
+  post: {
     backgroundColor: '#FFA037',
     borderRadius: 6,
     paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingVertical: 10,
   },
-  sendText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  postText: { color: '#fff', fontSize: 16, fontWeight: '600' },
 });
