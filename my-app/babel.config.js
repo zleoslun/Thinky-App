@@ -8,7 +8,9 @@ module.exports = {
           path: '.env',
           safe: false,
           allowUndefined: true,
+          allowlist: ['OPENAI_API_KEY'], 
         },
       ],
     ],
   };
+  
