@@ -1,4 +1,5 @@
 // app/(tabs)/people/index.tsx
+
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
@@ -11,7 +12,8 @@ import {
   ListRenderItem,
   Platform,
   ScrollView,
-  Alert,
+  Modal,
+  Alert, // ✅ Per mobile (iOS/Android)
 } from 'react-native';
 import {
   Ionicons,
@@ -52,17 +54,9 @@ const FILTERS = [
 export default function PeopleScreen() {
   const router = useRouter();
 
-  useEffect(() => {
-    (async () => {
-      const stored = await AsyncStorage.getItem('likedIds')
-      if (stored) {
-        try {
-          const arr: string[] = JSON.parse(stored)
-          setLikedIds(new Set(arr))
-        } catch {}
-      }
-    })()
-  }, [])
+  // Stato per il modal di conferma cancellazione post
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const [data, setData] = useState<Person[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
@@ -70,8 +64,7 @@ export default function PeopleScreen() {
   const [newComments, setNewComments] = useState<Record<string, string>>({});
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
 
-  
-
+  // Carica i post aggiunti dinamicamente (nuovi commenti di tipo "extra")
   const loadData = async () => {
     const base = await Promise.all(
       (peopleJson as Person[]).map(async post => {
@@ -108,12 +101,27 @@ export default function PeopleScreen() {
     setData([...extras, ...base]);
   };
 
+  // Carica likedIds da AsyncStorage all’avvio
+  useEffect(() => {
+    (async () => {
+      const stored = await AsyncStorage.getItem('likedIds');
+      if (stored) {
+        try {
+          const arr: string[] = JSON.parse(stored);
+          setLikedIds(new Set(arr));
+        } catch {}
+      }
+    })();
+  }, []);
+
+  // Ricarica i dati quando cambio filtro o quando la schermata riceve focus
   useFocusEffect(
     useCallback(() => {
       loadData();
     }, [selectedFilter])
   );
 
+  // Toggle del like su un post
   const onToggleLike = async (postId: string) => {
     setData(prev =>
       prev.map(post =>
@@ -132,12 +140,13 @@ export default function PeopleScreen() {
     else next.add(postId);
     await AsyncStorage.setItem('likedIds', JSON.stringify(Array.from(next)));
     setLikedIds(prev => {
-      const next = new Set(prev);
-      next.has(postId) ? next.delete(postId) : next.add(postId);
-      return next;
+      const updated = new Set(prev);
+      updated.has(postId) ? updated.delete(postId) : updated.add(postId);
+      return updated;
     });
   };
 
+  // Toggle dei commenti mostrati per un post
   const toggleComments = (postId: string) => {
     setOpenCommentsFor(prev => {
       const next = new Set(prev);
@@ -146,6 +155,7 @@ export default function PeopleScreen() {
     });
   };
 
+  // Aggiunta di un commento sotto a un post
   const addComment = async (postId: string) => {
     const text = newComments[postId]?.trim();
     if (!text) return;
@@ -173,16 +183,13 @@ export default function PeopleScreen() {
     );
   };
 
+  // Richiama il modal di conferma cancellazione post (invece di Alert.alert)
   const confirmDeleteExtra = (id: string) => {
-    Alert.alert(
-      'Delete post?',
-      'Are you sure you want to delete this post?',
-      [
-        { text: 'No', style: 'cancel' },
-        { text: 'Yes', onPress: () => deleteExtra(id) },
-      ]
-    );
+    setPendingDeleteId(id);
+    setShowConfirm(true);
   };
+
+  // Cancellazione effettiva del post extra da AsyncStorage e ricarica
   const deleteExtra = async (id: string) => {
     const raw = await AsyncStorage.getItem('newComments');
     const arr = raw ? JSON.parse(raw) : [];
@@ -191,16 +198,42 @@ export default function PeopleScreen() {
     loadData();
   };
 
-  const confirmDeleteReply = (postId: string, commentId: string) => {
-    Alert.alert(
-      'Delete comment?',
-      'Are you sure you want to delete this comment?',
-      [
-        { text: 'No', style: 'cancel' },
-        { text: 'Yes', onPress: () => deleteReply(postId, commentId) },
-      ]
-    );
+  // Conferma cancellazione (premo “Yes”)
+  const onConfirmDelete = () => {
+    if (pendingDeleteId) {
+      deleteExtra(pendingDeleteId);
+    }
+    setShowConfirm(false);
+    setPendingDeleteId(null);
   };
+
+  // Annulla cancellazione (premo “No”)
+  const onCancelDelete = () => {
+    setShowConfirm(false);
+    setPendingDeleteId(null);
+  };
+
+  // Conferma cancellazione di una singola reply (commento) sotto a un post
+  const confirmDeleteReply = (postId: string, commentId: string) => {
+    if (Platform.OS === 'web') {
+      // Su web, uso window.confirm
+      if (window.confirm('Are you sure you want to delete this comment?')) {
+        deleteReply(postId, commentId);
+      }
+    } else {
+      // Su iOS/Android, uso Alert.alert
+      Alert.alert(
+        'Delete comment?',
+        'Are you sure you want to delete this comment?',
+        [
+          { text: 'No', style: 'cancel' },
+          { text: 'Yes', onPress: () => deleteReply(postId, commentId) },
+        ]
+      );
+    }
+  };
+
+  // Cancellazione effettiva di una reply
   const deleteReply = async (postId: string, commentId: string) => {
     const updated = data.map(post =>
       post.id !== postId
@@ -217,12 +250,14 @@ export default function PeopleScreen() {
     );
   };
 
+  // Filtro dei post in base alla categoria selezionata
   const filtered = data.filter(p =>
     selectedFilter === 'All'
       ? true
       : p.topics.includes(selectedFilter)
   );
 
+  // Render item per FlatList
   const renderItem: ListRenderItem<Person> = ({ item }) => {
     const liked = likedIds.has(item.id);
     const isOpen = openCommentsFor.has(item.id);
@@ -309,6 +344,7 @@ export default function PeopleScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="Write a comment..."
+                  placeholderTextColor="#999"
                   value={newComments[item.id] || ''}
                   onChangeText={t =>
                     setNewComments(prev => ({
@@ -333,6 +369,7 @@ export default function PeopleScreen() {
 
   return (
     <View style={styles.vertical}>
+      {/* Titolo e filtro orizzontale */}
       <Text style={styles.subtitle}>Wellness Hub</Text>
       <View style={styles.filterContainer}>
         <ScrollView
@@ -361,6 +398,8 @@ export default function PeopleScreen() {
           ))}
         </ScrollView>
       </View>
+
+      {/* Lista dei post */}
       <FlatList<Person>
         style={styles.verticalChat}
         data={filtered}
@@ -372,6 +411,8 @@ export default function PeopleScreen() {
           marginTop: 12,
         }}
       />
+
+      {/* Pulsante flottante per aggiungere post */}
       <TouchableOpacity
         style={styles.fab}
         onPress={() =>
@@ -382,19 +423,50 @@ export default function PeopleScreen() {
           <Ionicons name="pencil" size={24} color="#fff" />
         </View>
       </TouchableOpacity>
+
+      {/* Modal di conferma cancellazione post */}
+      <Modal
+        transparent
+        visible={showConfirm}
+        animationType="fade"
+        onRequestClose={onCancelDelete}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Delete post?</Text>
+            <Text style={styles.modalMessage}>
+              Are you sure you want to delete this post?
+            </Text>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalCancel]}
+                onPress={onCancelDelete}
+              >
+                <Text style={styles.modalBtnText}>No</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalBtn, styles.modalConfirm]}
+                onPress={onConfirmDelete}
+              >
+                <Text style={styles.modalBtnText}>Yes</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  vertical: { flex: 1, backgroundColor: '#fff', },
+  vertical: { flex: 1, backgroundColor: '#fff' },
 
-  subtitle: {fontSize: 30, fontWeight: 600, padding: 16},
+  subtitle: { fontSize: 30, fontWeight: '600', padding: 16 },
 
   filterContainer: {
     height: 60,
     justifyContent: 'center',
-    paddingBottom: 16
+    paddingBottom: 16,
   },
   filterBar: {
     paddingHorizontal: 16,
@@ -538,5 +610,55 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 6,
     elevation: 4,
+  },
+
+  /* --------------- Modal Styles --------------- */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  modalMessage: {
+    fontSize: 14,
+    marginBottom: 16,
+    color: '#333',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  modalBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    marginLeft: 8,
+  },
+  modalCancel: {
+    backgroundColor: '#eee',
+  },
+  modalConfirm: {
+    backgroundColor: '#FFA037',
+  },
+  modalBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
   },
 });

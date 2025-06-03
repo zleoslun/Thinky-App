@@ -1,15 +1,18 @@
+// app/_layout.tsx
+
 import React from 'react';
-import { Slot, SplashScreen } from 'expo-router';
-import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import { ChatProvider } from './context/ChatContext';
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
-  return <Slot />;
+  return (
+    <ChatProvider>
+      <Stack>
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false }}
+        />
+      </Stack>
+    </ChatProvider>
+  );
 }

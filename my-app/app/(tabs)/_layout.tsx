@@ -51,25 +51,24 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => {
             const color = focused ? '#FFA037' : '#CCC';
             const size = 28;
-            switch (route.name) {
-              case 'index':
-                return <Entypo name="home" size={size} color={color} />;
-              case 'journal':
-                return <Entypo name="text-document" size={size} color={color} />;
-              case 'cards':
-                return <FontAwesome5 name="id-card" size={size} color={color} />;
-              case 'people':
-                return <Ionicons name="people" size={size} color={color} />;
-              default:
-                return null;
+            if (route.name.includes('home')) {
+              return <Entypo name="home" size={size} color={color} />;
+            } else if (route.name === 'journal') {
+              return <Entypo name="text-document" size={size} color={color} />;
+            } else if (route.name === 'cards') {
+              return <FontAwesome5 name="id-card" size={size} color={color} />;
+            } else if (route.name.includes('people')) {
+              return <Ionicons name="people" size={size} color={color} />;
+            } else {
+              return null;
             }
           },
         })}
       >
-        <Tabs.Screen name="index" />
+        <Tabs.Screen name="home" options={{ title: 'Home' }} />
         <Tabs.Screen name="journal" />
         <Tabs.Screen name="cards" />
-        <Tabs.Screen name="people/index" options={{ title: 'People' }} />
+        <Tabs.Screen name="people" options={{ title: 'People' }} />
       </Tabs>
     </SafeAreaView>
   );
