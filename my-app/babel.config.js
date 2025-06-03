@@ -1,4 +1,6 @@
-module.exports = {
+module.exports = function (api) {
+  api.cache(true);
+  return {
     presets: ['babel-preset-expo'],
     plugins: [
       [
@@ -7,10 +9,10 @@ module.exports = {
           moduleName: '@env',
           path: '.env',
           safe: false,
-          allowUndefined: true,
-          allowlist: ['OPENAI_API_KEY'], 
+          allowUndefined: false,
         },
       ],
+      'expo-router/babel',
     ],
   };
-  
+};

@@ -1,13 +1,21 @@
 // app/(tabs)/_layout.tsx
+
 import React from 'react';
 import {
-  SafeAreaView, View, Text, Image, TouchableOpacity, StyleSheet, Platform
+  SafeAreaView,
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
 } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
 import { Ionicons, Entypo, FontAwesome5 } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const router = useRouter();
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* HEADER */}

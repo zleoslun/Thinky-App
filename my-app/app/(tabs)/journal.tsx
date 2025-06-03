@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { ViewStyle, TextStyle, StyleSheet } from 'react-native';
 
 const sessionCardStyle = {
   width: '90%',
@@ -14,7 +15,7 @@ const sessionCardStyle = {
   shadowOpacity: 0.1,
   shadowRadius: 4,
   elevation: 2,
-};
+} satisfies ViewStyle;
 
 const buttonPrimary = {
   backgroundColor: '#ff8c42',
@@ -39,20 +40,20 @@ const buttonTextPrimary = {
   color: '#fff',
   fontWeight: 'bold',
   fontSize: 16,
-};
+} satisfies TextStyle;
 
 const buttonTextSecondary = {
   color: '#ff8c42',
   fontWeight: 'bold',
   fontSize: 16,
-};
+} satisfies TextStyle;
 
 const sessionTitle = {
   fontSize: 18,
   fontWeight: 'bold',
   color: '#4a2c0a',
   marginBottom: 8,
-};
+} satisfies TextStyle;
 
 const sessionSeparator = {
   height: 1,

@@ -18,7 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Markdown from 'react-native-markdown-display';
 
-import { ChatContext, ChatMessage } from '../../context/ChatContext';
+import { ChatContext, ChatMessage } from '../../../src/_context/ChatContext';
 
 export default function ChatScreen() {
   const router = useRouter();
