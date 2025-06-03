@@ -39,7 +39,7 @@ import React, {
   
     // All’avvio, mettiamo un messaggio di benvenuto
     useEffect(() => {
-      const welcomeText = 'Hi! ThinkyBot :)\n How can I assist you?';
+      const welcomeText = "Hi! I'm ThinkyBot :)\n How can I assist you?";
       const welcomeMsg: ChatMessage = {
         id: String(Date.now()),
         sender: 'bot',
