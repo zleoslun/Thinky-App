@@ -1,9 +1,7 @@
-import { View, Text } from 'react-native';
+import * as React from 'react';
+import { useState } from 'react';
+import JournalScreen from '../'; // ou './journal' selon l'arbo
 
 export default function CardsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Cards Screen</Text>
-    </View>
-  );
+  return <JournalScreen />;
 }
