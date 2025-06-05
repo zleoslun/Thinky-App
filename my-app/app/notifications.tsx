@@ -13,59 +13,71 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ORANGE = '#FFA500'; // Orange color constant
+const READ_COLOR = '#999'; // Color for read notifications
 
 type Notification = {
   id: number;
   title: string;
   time: string;
   message: string;
+  read: boolean;
 };
 
 export default function NotificationsScreen() {
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const notifications: Notification[] = [
+  const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: 1,
       title: "Your Daily Focus is ready!",
       time: "2 min ago",
       message: "Try today's 5-min breathing before your next study session.",
+      read: false,
     },
     {
       id: 2,
       title: "Journal Prompt",
       time: "10 min ago",
       message: "What's one thing you're proud of today?",
+      read: false,
     },
     {
       id: 3,
       title: "Reminder: Take a break!",
       time: "30 min ago",
       message: "You've been focused for 50 minutes. Stretch and hydrate.",
+      read: false,
     },
     {
       id: 4,
       title: "Mood check saved",
       time: "Today",
       message: "Your emotional log was saved at 8:00 AM.",
+      read: false,
     },
     {
       id: 5,
       title: "Session rescheduled",
       time: "Yesterday",
       message: "Your focus session is now set for 6:00 PM.",
+      read: false,
     },
-  ];
+  ]);
 
   const handleNotificationPress = (notification: Notification) => {
-    setSelectedNotification(notification);
+    // Mark as read when pressed
+    const updatedNotifications = notifications.map(n => 
+      n.id === notification.id ? {...n, read: true} : n
+    );
+    setNotifications(updatedNotifications);
+    
+    setSelectedNotification({...notification, read: true});
     setModalVisible(true);
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* NOTIFICATIONS LIST - Header removed */}
+      {/* NOTIFICATIONS LIST */}
       <ScrollView style={styles.notificationsContainer}>
         {notifications.map((notification) => (
           <TouchableOpacity 
@@ -75,16 +87,32 @@ export default function NotificationsScreen() {
           >
             <View style={styles.notificationItem}>
               <View style={styles.notificationHeader}>
-                <Ionicons 
-                  name="notifications-outline" 
-                  size={20} 
-                  color={ORANGE} 
-                />
-                <Text style={styles.notificationTitle}>
+                <View style={styles.bellContainer}>
+                  <Ionicons 
+                    name="notifications-outline" 
+                    size={20} 
+                    color={notification.read ? READ_COLOR : ORANGE} 
+                  />
+                  <Text style={[
+                    styles.bellNumber,
+                    notification.read && {color: READ_COLOR}
+                  ]}>
+                    {notification.id}
+                  </Text>
+                </View>
+                <Text style={[
+                  styles.notificationTitle,
+                  notification.read && {color: READ_COLOR}
+                ]}>
                   {notification.title} · <Text style={styles.timeText}>{notification.time}</Text>
                 </Text>
               </View>
-              <Text style={styles.notificationMessage}>{notification.message}</Text>
+              <Text style={[
+                styles.notificationMessage,
+                notification.read && {color: READ_COLOR}
+              ]}>
+                {notification.message}
+              </Text>
             </View>
             {notification.id !== notifications.length && (
               <View style={styles.divider} />
@@ -147,6 +175,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 4,
+  },
+  bellContainer: {
+    position: 'relative',
+    width: 20,
+    height: 20,
+  },
+  bellNumber: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: ORANGE,
   },
   notificationTitle: {
     fontSize: 16,
