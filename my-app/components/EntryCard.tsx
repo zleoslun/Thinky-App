@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { useEffect } from 'react';
 
 interface Props {
   date: string;
@@ -12,6 +13,11 @@ interface Props {
 const EntryCard = ({ date, text, onDelete, onEdit }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(text);
+
+  useEffect(() => {
+    setEditedText(text);
+  }, [text]);
+
 
   return (
     <View style={styles.card}>
