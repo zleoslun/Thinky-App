@@ -12,9 +12,11 @@ import {
 } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
 import { Ionicons, Entypo, FontAwesome5 } from '@expo/vector-icons';
+import { useNotifications } from '../../src/_context/NotificationsContext';
 
 export default function TabLayout() {
   const router = useRouter();
+  const { unreadCount } = useNotifications();
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -22,7 +24,7 @@ export default function TabLayout() {
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.push('/explore')}>
           <Image
-            source={{ uri: 'https://i.pravatar.cc/150?img=4' }}
+            source={{ uri: 'https://i.pravatar.cc/150?img=7' }}
             style={styles.avatar}
           />
         </TouchableOpacity>
@@ -30,9 +32,11 @@ export default function TabLayout() {
         <TouchableOpacity onPress={() => router.push('/notifications')}>
           <View>
             <Ionicons name="notifications-outline" size={24} color="#000" />
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>3</Text>
-            </View>
+            {unreadCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{unreadCount}</Text>
+              </View>
+            )}
           </View>
         </TouchableOpacity>
       </View>

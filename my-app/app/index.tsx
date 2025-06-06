@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import EntryCard from "@/components/EntryCard";
 import EntryInput from "@/components/EntryInput";
+import { Ionicons } from '@expo/vector-icons';
 
 
 const JournalScreen = () => {
@@ -69,10 +70,10 @@ const JournalScreen = () => {
         }}
 
       />
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={styles.pastTitle}>Guided Prompt</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', margin:'1em'}}>
+      <Text style={styles.pastTitle}>Guided Prompt</Text>
         <TouchableOpacity onPress={() => setPromptInfo(getRandomPrompt())}>
-          <Text style={{ fontSize: 20 }}>🔀</Text>
+          <Ionicons name="shuffle" size={20} color="#371B34" style={styles.buttonShuffle} />
         </TouchableOpacity>
       </View>
       
@@ -133,7 +134,6 @@ const styles = StyleSheet.create({
   pastTitle: {
     fontSize: 24,
     fontWeight: "700",
-    marginTop: 40,
     color: "#371B34",
   },
   deleteButton: {
@@ -147,6 +147,11 @@ const styles = StyleSheet.create({
     color: '#a00',
     fontWeight: 'bold',
   },
+  buttonShuffle: {
+    color: "#371B34",
+    borderRadius: 9,
+    padding: 10,
+  }
 
 });
 

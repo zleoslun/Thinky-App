@@ -1,4 +1,5 @@
 // app/notifications.tsx
+
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
@@ -11,67 +12,19 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNotifications, Notification } from '../src/_context/NotificationsContext';
 
 const ORANGE = '#FFA500'; // Orange color constant
 const READ_COLOR = '#999'; // Color for read notifications
 
-type Notification = {
-  id: number;
-  title: string;
-  time: string;
-  message: string;
-  read: boolean;
-};
-
 export default function NotificationsScreen() {
+  const { notifications, markAsRead, unreadCount } = useNotifications();
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: 1,
-      title: "Your Daily Focus is ready!",
-      time: "2 min ago",
-      message: "Try today's 5-min breathing before your next study session.",
-      read: false,
-    },
-    {
-      id: 2,
-      title: "Journal Prompt",
-      time: "10 min ago",
-      message: "What's one thing you're proud of today?",
-      read: false,
-    },
-    {
-      id: 3,
-      title: "Reminder: Take a break!",
-      time: "30 min ago",
-      message: "You've been focused for 50 minutes. Stretch and hydrate.",
-      read: false,
-    },
-    {
-      id: 4,
-      title: "Mood check saved",
-      time: "Today",
-      message: "Your emotional log was saved at 8:00 AM.",
-      read: false,
-    },
-    {
-      id: 5,
-      title: "Session rescheduled",
-      time: "Yesterday",
-      message: "Your focus session is now set for 6:00 PM.",
-      read: false,
-    },
-  ]);
 
   const handleNotificationPress = (notification: Notification) => {
-    // Mark as read when pressed
-    const updatedNotifications = notifications.map(n => 
-      n.id === notification.id ? {...n, read: true} : n
-    );
-    setNotifications(updatedNotifications);
-    
-    setSelectedNotification({...notification, read: true});
+    markAsRead(notification.id);
+    setSelectedNotification({ ...notification, read: true });
     setModalVisible(true);
   };
 
@@ -93,12 +46,9 @@ export default function NotificationsScreen() {
                     size={20} 
                     color={notification.read ? READ_COLOR : ORANGE} 
                   />
-                  <Text style={[
-                    styles.bellNumber,
-                    notification.read && {color: READ_COLOR}
-                  ]}>
-                    {notification.id}
-                  </Text>
+                  {!notification.read && (
+                    <View style={[styles.bellDot, { backgroundColor: ORANGE }]} />
+                  )}
                 </View>
                 <Text style={[
                   styles.notificationTitle,
@@ -175,6 +125,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 4,
+    flexWrap: 'wrap',
   },
   bellContainer: {
     position: 'relative',
@@ -194,6 +145,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 8,
     color: ORANGE,
+  },
+  bellDot: {
+    position: 'absolute',
+    top: -3,
+    right: -3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   timeText: {
     fontWeight: 'normal',

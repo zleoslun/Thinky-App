@@ -1,31 +1,91 @@
-// app/notifications.tsx
+// app/explore.tsx
+
 import React from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
-export default function NotificationsScreen() {
+export const options = {
+  headerBackTitleVisible: false,
+  headerTitle: 'Explore',
+  headerTitleAlign: 'center',
+  headerStyle: {
+    backgroundColor: '#fff',
+    shadowColor: 'transparent', // iOS
+    elevation: 0,               // Android
+    height: Platform.OS === 'ios' ? 44 : 56, 
+  },
+};
+
+export default function ExploreScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Explore section</Text>
-      </View>
-
       {/* CONTENUTO PRINCIPALE */}
       <View style={styles.content}>
-        <Text>Exoplore page</Text>
+        {/* My Profile */}
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => router.push('/profile')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="person-circle-outline" size={24} color="#371B34" />
+          <Text style={styles.menuText}>My Profile</Text>
+          <Ionicons name="chevron-forward" size={20} color="#999" />
+        </TouchableOpacity>
+
+        {/* Settings */}
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => router.push('/settings')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="settings-outline" size={24} color="#371B34" />
+          <Text style={styles.menuText}>Settings</Text>
+          <Ionicons name="chevron-forward" size={20} color="#999" />
+        </TouchableOpacity>
+
+        {/* Help & Support */}
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => router.push('/help')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="help-circle-outline" size={24} color="#371B34" />
+          <Text style={styles.menuText}>Help & Support</Text>
+          <Ionicons name="chevron-forward" size={20} color="#999" />
+        </TouchableOpacity>
+
+        {/* Send Feedback */}
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => router.push('/feedback')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="chatbox-ellipses-outline" size={24} color="#371B34" />
+          <Text style={styles.menuText}>Send Feedback</Text>
+          <Ionicons name="chevron-forward" size={20} color="#999" />
+        </TouchableOpacity>
+
+        {/* Logout */}
+        <TouchableOpacity
+          style={[styles.menuItem, styles.logoutItem]}
+          onPress={() => router.replace('/login')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="log-out-outline" size={24} color="#A00" />
+          <Text style={[styles.menuText, { color: '#A00' }]}>Logout</Text>
+          <Ionicons name="chevron-forward" size={20} color="#A00" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -36,24 +96,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eaeaea',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '600',
-    marginRight: 24, 
-  },
   content: {
     flex: 1,
-    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  menuItem: {
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  menuText: {
+    flex: 1,
+    marginLeft: 16,
+    fontSize: 16,
+    color: '#371B34',
+    fontWeight: '500',
+  },
+  logoutItem: {
+    borderBottomWidth: 0,
+    marginTop: 24,
   },
 });

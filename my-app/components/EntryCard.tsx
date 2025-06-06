@@ -1,7 +1,15 @@
+// app/components/EntryCard.tsx
+
 import * as React from 'react';
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   date: string;
@@ -17,7 +25,6 @@ const EntryCard = ({ date, text, onDelete, onEdit }: Props) => {
   useEffect(() => {
     setEditedText(text);
   }, [text]);
-
 
   return (
     <View style={styles.card}>
@@ -44,20 +51,27 @@ const EntryCard = ({ date, text, onDelete, onEdit }: Props) => {
             }}
             style={[styles.button, { backgroundColor: "#4CAF50" }]}
           >
-            <Text style={styles.buttonText}>✅ Save</Text>
+            <Ionicons name="checkmark" size={16} color="#fff" />
+            <Text style={styles.buttonText}> Save</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.button}>
-            <Text style={styles.buttonText}>✏ Edit</Text>
+          <TouchableOpacity
+            onPress={() => setIsEditing(true)}
+            style={styles.button}
+          >
+            <Ionicons name="pencil" size={16} color="#fff" />
+            <Text style={styles.buttonText}> Edit</Text>
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity onPress={onDelete} style={[styles.button, { backgroundColor: "#f88" }]}>
-          <Text style={styles.buttonText}>🗑 Delete</Text>
+        <TouchableOpacity
+          onPress={onDelete}
+          style={[styles.button, { backgroundColor: "#f88" }]}
+        >
+          <Ionicons name="trash" size={16} color="#fff" />
+          <Text style={styles.buttonText}> Delete</Text>
         </TouchableOpacity>
       </View>
-
-
     </View>
   );
 };
@@ -98,6 +112,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   button: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#FE8235",
     borderRadius: 6,
     paddingHorizontal: 12,
