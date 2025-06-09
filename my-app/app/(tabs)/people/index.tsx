@@ -13,7 +13,7 @@ import {
   Platform,
   ScrollView,
   Modal,
-  Alert, // ✅ Per mobile (iOS/Android)
+  Alert, 
 } from 'react-native';
 import {
   Ionicons,
@@ -54,7 +54,6 @@ const FILTERS = [
 export default function PeopleScreen() {
   const router = useRouter();
 
-  // Stato per il modal di conferma cancellazione post
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
@@ -64,7 +63,6 @@ export default function PeopleScreen() {
   const [newComments, setNewComments] = useState<Record<string, string>>({});
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
 
-  // Carica i post aggiunti dinamicamente (nuovi commenti di tipo "extra")
   const loadData = async () => {
     const base = await Promise.all(
       (peopleJson as Person[]).map(async post => {
@@ -101,7 +99,6 @@ export default function PeopleScreen() {
     setData([...extras, ...base]);
   };
 
-  // Carica likedIds da AsyncStorage all’avvio
   useEffect(() => {
     (async () => {
       const stored = await AsyncStorage.getItem('likedIds');
@@ -114,14 +111,12 @@ export default function PeopleScreen() {
     })();
   }, []);
 
-  // Ricarica i dati quando cambio filtro o quando la schermata riceve focus
   useFocusEffect(
     useCallback(() => {
       loadData();
     }, [selectedFilter])
   );
 
-  // Toggle del like su un post
   const onToggleLike = async (postId: string) => {
     setData(prev =>
       prev.map(post =>
@@ -146,7 +141,6 @@ export default function PeopleScreen() {
     });
   };
 
-  // Toggle dei commenti mostrati per un post
   const toggleComments = (postId: string) => {
     setOpenCommentsFor(prev => {
       const next = new Set(prev);
@@ -155,7 +149,6 @@ export default function PeopleScreen() {
     });
   };
 
-  // Aggiunta di un commento sotto a un post
   const addComment = async (postId: string) => {
     const text = newComments[postId]?.trim();
     if (!text) return;
@@ -183,13 +176,11 @@ export default function PeopleScreen() {
     );
   };
 
-  // Richiama il modal di conferma cancellazione post (invece di Alert.alert)
   const confirmDeleteExtra = (id: string) => {
     setPendingDeleteId(id);
     setShowConfirm(true);
   };
 
-  // Cancellazione effettiva del post extra da AsyncStorage e ricarica
   const deleteExtra = async (id: string) => {
     const raw = await AsyncStorage.getItem('newComments');
     const arr = raw ? JSON.parse(raw) : [];
@@ -198,7 +189,6 @@ export default function PeopleScreen() {
     loadData();
   };
 
-  // Conferma cancellazione (premo “Yes”)
   const onConfirmDelete = () => {
     if (pendingDeleteId) {
       deleteExtra(pendingDeleteId);
@@ -207,13 +197,11 @@ export default function PeopleScreen() {
     setPendingDeleteId(null);
   };
 
-  // Annulla cancellazione (premo “No”)
   const onCancelDelete = () => {
     setShowConfirm(false);
     setPendingDeleteId(null);
   };
 
-  // Conferma cancellazione di una singola reply (commento) sotto a un post
   const confirmDeleteReply = (postId: string, commentId: string) => {
     if (Platform.OS === 'web') {
       // Su web, uso window.confirm
@@ -233,7 +221,6 @@ export default function PeopleScreen() {
     }
   };
 
-  // Cancellazione effettiva di una reply
   const deleteReply = async (postId: string, commentId: string) => {
     const updated = data.map(post =>
       post.id !== postId
@@ -250,14 +237,12 @@ export default function PeopleScreen() {
     );
   };
 
-  // Filtro dei post in base alla categoria selezionata
   const filtered = data.filter(p =>
     selectedFilter === 'All'
       ? true
       : p.topics.includes(selectedFilter)
   );
 
-  // Render item per FlatList
   const renderItem: ListRenderItem<Person> = ({ item }) => {
     const liked = likedIds.has(item.id);
     const isOpen = openCommentsFor.has(item.id);
@@ -399,7 +384,6 @@ export default function PeopleScreen() {
         </ScrollView>
       </View>
 
-      {/* Lista dei post */}
       <FlatList<Person>
         style={styles.verticalChat}
         data={filtered}
@@ -412,7 +396,6 @@ export default function PeopleScreen() {
         }}
       />
 
-      {/* Pulsante flottante per aggiungere post */}
       <TouchableOpacity
         style={styles.fab}
         onPress={() =>
@@ -424,7 +407,6 @@ export default function PeopleScreen() {
         </View>
       </TouchableOpacity>
 
-      {/* Modal di conferma cancellazione post */}
       <Modal
         transparent
         visible={showConfirm}

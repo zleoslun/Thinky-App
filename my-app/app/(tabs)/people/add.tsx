@@ -58,7 +58,6 @@ export default function AddCommentScreen() {
         <Text style={styles.title}>New Comment</Text>
       </View>
 
-      {/* AREA DI TESTO */}
       <TextInput
         style={styles.input}
         placeholder="Write your comment..."
@@ -67,7 +66,6 @@ export default function AddCommentScreen() {
         onChangeText={setText}
       />
 
-      {/* SELEZIONE TAG */}
       <Text style={styles.label}>Select tags (optional):</Text>
       <ScrollView
         horizontal
@@ -95,7 +93,6 @@ export default function AddCommentScreen() {
         ))}
       </ScrollView>
 
-      {/* AZIONI IN FONDO */}
       <View style={styles.actions}>
         <TouchableOpacity onPress={() => router.back()} style={styles.cancel}>
           <Text style={styles.cancelText}>Cancel</Text>
@@ -143,8 +140,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 16,
     height: 60,
-    marginBottom: 16,      // spazio ridotto prima dei bottoni
-  },
+    marginBottom: 16,  
+  },    
   tagButton: {
     height: 36,
     paddingHorizontal: 12,

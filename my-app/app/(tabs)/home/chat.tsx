@@ -30,12 +30,10 @@ export default function ChatScreen() {
   const { messages, sendUserMessage, loading } = chatCtx;
   const [text, setText] = useState('');
 
-  // Riferimenti per l’animazione dei puntini “in scrittura”
   const dot1 = useRef(new Animated.Value(0)).current;
   const dot2 = useRef(new Animated.Value(0)).current;
   const dot3 = useRef(new Animated.Value(0)).current;
 
-  // Ref al FlatList per scrollare in fondo
   const flatListRef = useRef<FlatList<ChatMessage>>(null);
 
   useEffect(() => {
@@ -116,7 +114,6 @@ export default function ChatScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header con la freccia “indietro” */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#000" />
@@ -127,7 +124,6 @@ export default function ChatScreen() {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* Lista dei messaggi */}
       <FlatList
         ref={flatListRef}
         style={styles.messageList}
@@ -142,17 +138,13 @@ export default function ChatScreen() {
                 isUser ? styles.bubbleUser : styles.bubbleBot,
               ]}
             >
-              {/* 
-                Qui usiamo Markdown con stili dedicati sia per il “body” che per il “strong”
-                affinché il grassetto venga renderizzato anche su web/desktop.
-              */}
               <Markdown style={markdownStyles(isUser) as any}>
                 {item.text}
               </Markdown>
             </View>
           );
         }}
-        // Aggiunge spazio sufficiente in fondo così la bolla non viene nascosta
+
         contentContainerStyle={{
           padding: 16,
           paddingBottom: Platform.OS === 'ios' ? 350 : 330,
@@ -160,7 +152,6 @@ export default function ChatScreen() {
         ListFooterComponent={<View style={{ height: 50 }} />}
       />
 
-      {/* Indicatore “typing” con 3 puntini animati */}
       {loading && (
         <View style={styles.typingContainer}>
           <Animated.View style={[styles.dot, { opacity: dot1 }]} />
@@ -169,7 +160,6 @@ export default function ChatScreen() {
         </View>
       )}
 
-      {/* Area di input testo */}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 60}
@@ -279,7 +269,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// Stili Markdown, compresi quelli per il “strong”
 const markdownStyles = (isUser: boolean) => ({
   body: {
     color: isUser ? '#fff' : '#000',
@@ -287,10 +276,9 @@ const markdownStyles = (isUser: boolean) => ({
     lineHeight: 20,
   },
   strong: {
-    fontWeight: '700',    // Grassetto
+    fontWeight: '700',   
   },
   em: {
-    fontStyle: 'italic',  // Corsivo
+    fontStyle: 'italic',  
   },
-  // Se hai bisogno di h1, h2, link, elenchi ecc., aggiungi qui.
 });
