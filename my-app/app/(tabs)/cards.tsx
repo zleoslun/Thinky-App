@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import JournalScreen from '../'; // ou './journal' selon l'arbo
+import JournalScreen from '../';
 
 export default function CardsScreen() {
   return <JournalScreen />;

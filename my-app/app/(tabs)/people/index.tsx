@@ -204,12 +204,10 @@ export default function PeopleScreen() {
 
   const confirmDeleteReply = (postId: string, commentId: string) => {
     if (Platform.OS === 'web') {
-      // Su web, uso window.confirm
       if (window.confirm('Are you sure you want to delete this comment?')) {
         deleteReply(postId, commentId);
       }
     } else {
-      // Su iOS/Android, uso Alert.alert
       Alert.alert(
         'Delete comment?',
         'Are you sure you want to delete this comment?',
@@ -354,7 +352,6 @@ export default function PeopleScreen() {
 
   return (
     <View style={styles.vertical}>
-      {/* Titolo e filtro orizzontale */}
       <Text style={styles.subtitle}>Wellness Hub</Text>
       <View style={styles.filterContainer}>
         <ScrollView
@@ -594,7 +591,6 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
 
-  /* --------------- Modal Styles --------------- */
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',

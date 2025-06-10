@@ -83,7 +83,7 @@ export default function JournalScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={{ alignItems: 'center', paddingTop: 50, paddingBottom: 100 }}>
+    <ScrollView contentContainerStyle={{ alignItems: 'center', paddingTop: 30, paddingBottom: 100, backgroundColor: '#fff' }}>
       {/* Header with icon */}
       <View
         style={{
@@ -103,7 +103,7 @@ export default function JournalScreen() {
         }}
       >
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#333', marginBottom: 4 }}>
+          <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#333', marginBottom: 4}}>
             Feeling overwhelmed?
           </Text>
           <Text style={{ fontSize: 18, color: '#666', marginBottom: 16 }}>

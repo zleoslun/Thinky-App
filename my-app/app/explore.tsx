@@ -18,8 +18,8 @@ export const options = {
   headerTitleAlign: 'center',
   headerStyle: {
     backgroundColor: '#fff',
-    shadowColor: 'transparent', // iOS
-    elevation: 0,               // Android
+    shadowColor: 'transparent', 
+    elevation: 0,               
     height: Platform.OS === 'ios' ? 44 : 56, 
   },
 };

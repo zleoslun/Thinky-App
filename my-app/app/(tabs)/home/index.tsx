@@ -58,7 +58,7 @@ export default function HomeScreen() {
           style={styles.feelingScroll}
           contentContainerStyle={styles.feelingContent}
           decelerationRate="fast"
-          snapToInterval={buttonWidth + 12}
+          snapToInterval={buttonWidth + 6}
           snapToAlignment="center"
         >
           {feelings.map((f) => (
@@ -128,7 +128,7 @@ export default function HomeScreen() {
       <TouchableOpacity
         style={[
           styles.fab,
-          { bottom: Platform.OS === 'ios' ? 70 : 60 }
+          { bottom: Platform.OS === 'ios' ? 100 : 80 }
         ]}
         onPress={() => {
           router.push('/home/chat');
@@ -151,15 +151,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingTop: 80,
+    paddingTop: 20,
     paddingBottom: 100,
     paddingHorizontal: 20,
   },
   readyText: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: '600',
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   feelingText: {
     fontSize: 18,
@@ -169,19 +169,18 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   feelingScroll: {
-    marginBottom: 16,
+    marginBottom: 35,
     marginTop: 4,
     flexGrow: 0,
   },
   feelingContent: {
-    paddingHorizontal: 12,
     alignItems: 'flex-start',
   },
   feelingButton: {
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderRadius: 16,
-    marginRight: 12,
+    marginRight: 6,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -205,7 +204,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 24,
     minHeight: 140,
-    marginBottom: 24,
+    marginBottom: 35,
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
@@ -234,7 +233,7 @@ const styles = StyleSheet.create({
   actionsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 24,
+    marginBottom: 35,
   },
   actionButton: {
     flex: 1,

@@ -14,8 +14,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNotifications, Notification } from '../src/_context/NotificationsContext';
 
-const ORANGE = '#FFA500'; // Orange color constant
-const READ_COLOR = '#999'; // Color for read notifications
+const ORANGE = '#FFA500'; 
+const READ_COLOR = '#999';
 
 export default function NotificationsScreen() {
   const { notifications, markAsRead, unreadCount } = useNotifications();
@@ -71,7 +71,6 @@ export default function NotificationsScreen() {
         ))}
       </ScrollView>
 
-      {/* NOTIFICATION DETAIL MODAL */}
       <Modal
         animationType="fade"
         transparent={true}
