@@ -1,19 +1,17 @@
 // app/(tabs)/home/index.tsx
 
+import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
+  Dimensions,
   Platform,
   ScrollView,
-  Alert,
-  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -32,8 +30,11 @@ export default function HomeScreen() {
     { label: 'Anxious', color: '#FDE68A', iconName: 'alert-circle-outline' },
   ];
 
-  const handleFeelingPress = (feeling) => {
-    Alert.alert(`You selected: ${feeling}`, 'Here is a tip for your mood!');
+  const handleFeelingPress = (feeling: string) => {
+    router.push({
+      pathname: '/home/mood-tips',
+      params: { mood: feeling }
+    });
   };
 
   const buttonWidth = Math.max(85, (screenWidth - 40) / 5);
@@ -114,7 +115,7 @@ export default function HomeScreen() {
 
       <View style={styles.quoteCard}>
         <Text style={styles.quoteText}>
-          You don’t have to be perfect.{'\n'}Just do your best today
+          You don't have to be perfect.{'\n'}Just do your best today
         </Text>
         <MaterialCommunityIcons name="format-quote-close" size={20} color="#ccc" />
       </View>
@@ -132,6 +133,8 @@ export default function HomeScreen() {
     </ScrollView>
   );
 }
+
+// ... (keep all the existing styles the same)
 
 const styles = StyleSheet.create({
   container: {
