@@ -27,15 +27,20 @@ export default function LoginScreen() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleLogin = () => {
-    console.log('Tentative de login avec :', username, password);
+    console.log('Login attempt with:', username, password);
     const ok = login(username, password);
-    console.log('Résultat de login() :', ok);
+    console.log('Result of login():', ok);
     if (!ok) {
-      Alert.alert('Erreur', 'Nom d’utilisateur ou mot de passe incorrect.');
+      setError('Incorrect username or password.');
+    } else {
+      setError('');
     }
   };
+
+
 
 
   return (
@@ -58,6 +63,10 @@ export default function LoginScreen() {
           value={password}
           onChangeText={setPassword}
         />
+        {error !== '' && (
+          <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>
+        )}
+
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Se connecter</Text>
         </TouchableOpacity>

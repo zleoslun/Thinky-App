@@ -17,6 +17,8 @@ const JournalScreen = () => {
   const router = useRouter();
   const { user, logout } = useAuth();
 
+
+
   React.useEffect(() => {
     if (!user) {
       router.replace('/login');
@@ -61,6 +63,11 @@ const JournalScreen = () => {
     return random;
   };
 
+  if (!user) {
+    router.replace('/login');
+    return null; // ou un écran de chargement temporaire
+  }
+
 
 
   return (
@@ -68,8 +75,13 @@ const JournalScreen = () => {
 
       <Text style={styles.title}>Today’s Journal</Text>
       <Text style={styles.subtitle}>
-        Hello {user} 👋 Writing can help you clear your mind and reduce stress
+        Hello {user && typeof user === 'object'
+          ? user.name ?? user.email ?? 'friend'
+          : user ?? 'friend'} 👋 Writing can help you clear your mind and reduce stress
       </Text>
+
+
+
 
 
 
