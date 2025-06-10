@@ -40,88 +40,96 @@ export default function HomeScreen() {
   const buttonWidth = Math.max(85, (screenWidth - 40) / 5);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.readyText}>
-        Ready to take on the day,{' '}
-        <Text style={{ fontWeight: 'bold' }}>{userName}</Text>?
-      </Text>
-
-      <Text style={styles.feelingText}>How are you feeling today?</Text>
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.feelingScroll}
-        contentContainerStyle={styles.feelingContent}
-        decelerationRate="fast"
-        snapToInterval={buttonWidth + 12}
-        snapToAlignment="center"
+    <View style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
       >
-        {feelings.map((f) => (
+        <Text style={styles.readyText}>
+          Ready to take on the day,{' '}
+          <Text style={{ fontWeight: 'bold' }}>{userName}</Text>?
+        </Text>
+
+        <Text style={styles.feelingText}>How are you feeling today?</Text>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.feelingScroll}
+          contentContainerStyle={styles.feelingContent}
+          decelerationRate="fast"
+          snapToInterval={buttonWidth + 12}
+          snapToAlignment="center"
+        >
+          {feelings.map((f) => (
+            <TouchableOpacity
+              key={f.label}
+              onPress={() => handleFeelingPress(f.label)}
+              style={[
+                styles.feelingButton,
+                {
+                  backgroundColor: f.color,
+                  width: buttonWidth,
+                },
+              ]}
+            >
+              <MaterialCommunityIcons name={f.iconName} size={32} color="#333" />
+              <Text style={styles.feelingLabel}>{f.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <TouchableOpacity
+          style={styles.focusCard}
+          onPress={() => router.push('/home/focus')}
+        >
+          <View style={styles.focusTextContainer}>
+            <Text style={styles.focusTitle}>Daily Focus Suggestion</Text>
+            <Text style={styles.focusSubtitle}>
+              Try a 5-min breathing exercise{'\n'}before studying
+            </Text>
+            <Text style={styles.focusLink}>
+              Start Now <Text style={{ fontSize: 16 }}>→</Text>
+            </Text>
+          </View>
+          <MaterialCommunityIcons name="yoga" size={64} color="#A0522D" />
+        </TouchableOpacity>
+
+        <View style={styles.actionsRow}>
           <TouchableOpacity
-            key={f.label}
-            onPress={() => handleFeelingPress(f.label)}
-            style={[
-              styles.feelingButton,
-              {
-                backgroundColor: f.color,
-                width: buttonWidth,
-              },
-            ]}
+            style={styles.actionButton}
+            onPress={() => router.push('/home/pomodoro')}
           >
-            <MaterialCommunityIcons name={f.iconName} size={32} color="#333" />
-            <Text style={styles.feelingLabel}>{f.label}</Text>
+            <MaterialCommunityIcons name="timer-sand" size={24} color="#7C4F20" />
+            <Text style={styles.actionButtonText}>Exam Mode</Text>
           </TouchableOpacity>
-        ))}
+
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => router.push('/cards')}
+          >
+            <MaterialCommunityIcons
+              name="notebook-outline"
+              size={24}
+              color="#7C4F20"
+            />
+            <Text style={styles.actionButtonText}>Journal</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.quoteCard}>
+          <Text style={styles.quoteText}>
+            You don't have to be perfect.{'\n'}Just do your best today
+          </Text>
+          <MaterialCommunityIcons name="format-quote-close" size={20} color="#ccc" />
+        </View>
       </ScrollView>
 
       <TouchableOpacity
-        style={styles.focusCard}
-        onPress={() => router.push('/home/focus')}
-      >
-        <View style={styles.focusTextContainer}>
-          <Text style={styles.focusTitle}>Daily Focus Suggestion</Text>
-          <Text style={styles.focusSubtitle}>
-            Try a 5-min breathing exercise{'\n'}before studying
-          </Text>
-          <Text style={styles.focusLink}>
-            Start Now <Text style={{ fontSize: 16 }}>→</Text>
-          </Text>
-        </View>
-        <MaterialCommunityIcons name="yoga" size={64} color="#A0522D" />
-      </TouchableOpacity>
-
-      <View style={styles.actionsRow}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => router.push('/home/pomodoro')}
-        >
-          <MaterialCommunityIcons name="timer-sand" size={24} color="#7C4F20" />
-          <Text style={styles.actionButtonText}>Exam Mode</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => router.push('/cards')}
-        >
-          <MaterialCommunityIcons
-            name="notebook-outline"
-            size={24}
-            color="#7C4F20"
-          />
-          <Text style={styles.actionButtonText}>Journal</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.quoteCard}>
-        <Text style={styles.quoteText}>
-          You don't have to be perfect.{'\n'}Just do your best today
-        </Text>
-        <MaterialCommunityIcons name="format-quote-close" size={20} color="#ccc" />
-      </View>
-
-      <TouchableOpacity
-        style={styles.fab}
+        style={[
+          styles.fab,
+          { bottom: Platform.OS === 'ios' ? 70 : 60 }
+        ]}
         onPress={() => {
           router.push('/home/chat');
         }}
@@ -130,20 +138,21 @@ export default function HomeScreen() {
           <FontAwesome5 name="robot" size={24} color="#fff" />
         </View>
       </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 }
-
-// ... (keep all the existing styles the same)
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
   },
+  scrollView: {
+    flex: 1,
+  },
   contentContainer: {
     paddingTop: 80,
-    paddingBottom: 40,
+    paddingBottom: 100,
     paddingHorizontal: 20,
   },
   readyText: {
@@ -274,8 +283,9 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: 16,
-    bottom: Platform.OS === 'ios' ? 100 : 80,
+    right: 20,
+    width: 56,
+    height: 56,
     zIndex: 10,
   },
   fabInner: {
