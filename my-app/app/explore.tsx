@@ -11,6 +11,9 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../src/_context/AuthContext';
+
 
 export const options = {
   headerBackTitleVisible: false,
@@ -18,15 +21,17 @@ export const options = {
   headerTitleAlign: 'center',
   headerStyle: {
     backgroundColor: '#fff',
-    shadowColor: 'transparent', 
-    elevation: 0,               
-    height: Platform.OS === 'ios' ? 44 : 56, 
+    shadowColor: 'transparent',
+    elevation: 0,
+    height: Platform.OS === 'ios' ? 44 : 56,
   },
 };
 
 export default function ExploreScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
+
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -79,7 +84,14 @@ export default function ExploreScreen() {
         {/* Logout */}
         <TouchableOpacity
           style={[styles.menuItem, styles.logoutItem]}
-          onPress={() => router.replace('/login')}
+          onPress={async () => {
+            await AsyncStorage.removeItem('user');
+            logout(); // <-- ajoute ça pour réinitialiser le contexte
+            router.replace({ pathname: '/login', params: { logout: 'true' } });
+          }}
+
+
+
           activeOpacity={0.7}
         >
           <Ionicons name="log-out-outline" size={24} color="#A00" />

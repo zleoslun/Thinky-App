@@ -7,12 +7,24 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 
 import EntryCard from "@/components/EntryCard";
 import EntryInput from "@/components/EntryInput";
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useAuth } from '../src/_context/AuthContext';
 
 
 const JournalScreen = () => {
   const [freeText, setFreeText] = useState("");
   const [promptText, setPromptText] = useState("");
-  
+  const router = useRouter();
+  const { user, logout } = useAuth();
+
+  React.useEffect(() => {
+    if (!user) {
+      router.replace('/login');
+    }
+  }, [user]);
+
+
+
   const [pastEntries, setPastEntries] = useState([
     { date: "April 29 at 10:11", text: "Today I had a hard time staying focused..." },
     { date: "April 28 at 18:44", text: "I managed to finish all my tasks on time!" },
@@ -56,8 +68,11 @@ const JournalScreen = () => {
 
       <Text style={styles.title}>Today’s Journal</Text>
       <Text style={styles.subtitle}>
-        Writing can help you clear your mind and reduce stress
+        Hello {user} 👋 Writing can help you clear your mind and reduce stress
       </Text>
+
+
+
 
       <EntryInput
         label="Free Write"
@@ -70,13 +85,14 @@ const JournalScreen = () => {
         }}
 
       />
-      <View style={{ flexDirection: 'row', alignItems: 'center', margin:'1em'}}>
-      <Text style={styles.pastTitle}>Guided Prompt</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', margin: 16 }}>
+
+        <Text style={styles.pastTitle}>Guided Prompt</Text>
         <TouchableOpacity onPress={() => setPromptInfo(getRandomPrompt())}>
           <Ionicons name="shuffle" size={20} color="#371B34" style={styles.buttonShuffle} />
         </TouchableOpacity>
       </View>
-      
+
       <EntryInput
         label="Guided Prompt"
         placeholder="Respond..."
@@ -107,10 +123,10 @@ const JournalScreen = () => {
             updated[index].text = newText;
             setPastEntries(updated);
           }}
-  />
-))}
+        />
+      ))}
 
-      
+
     </ScrollView>
   );
 };
@@ -151,7 +167,8 @@ const styles = StyleSheet.create({
     color: "#371B34",
     borderRadius: 9,
     padding: 10,
-  }
+  },
+
 
 });
 

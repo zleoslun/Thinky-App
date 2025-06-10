@@ -1,55 +1,42 @@
-// app/login.tsx
-
 import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Alert,
   Image,
+  TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-
-export const options = {
-  headerShown: false,
-};
+import { useAuth } from '../src/_context/AuthContext';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [showLoginUI, setShowLoginUI] = useState(false);
-
+  const { login, user } = useAuth();
   useEffect(() => {
-    Alert.alert(
-      'Confirm Logout',
-      'Are you sure you want to logout?',
-      [
-        {
-          text: 'Cancel',
-          onPress: () => {
-            router.back();
-          },
-          style: 'cancel',
-        },
-        {
-          text: 'Yes',
-          onPress: () => {
-            setShowLoginUI(true);
-          },
-        },
-      ],
-      { cancelable: false }
-    );
-  }, []);
+    if (user) {
+      console.log('Redirection vers / car user est connecté :', user);
+      router.replace('/(tabs)/home');
 
-  const onPressLogin = () => {
-    router.replace('/home');
+    }
+  }, [user]);
+
+
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    console.log('Tentative de login avec :', username, password);
+    const ok = login(username, password);
+    console.log('Résultat de login() :', ok);
+    if (!ok) {
+      Alert.alert('Erreur', 'Nom d’utilisateur ou mot de passe incorrect.');
+    }
   };
 
-  if (!showLoginUI) {
-    return null;
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,8 +45,21 @@ export default function LoginScreen() {
           source={{ uri: 'https://i.pravatar.cc/150?img=7' }}
           style={styles.avatar}
         />
-        <TouchableOpacity style={styles.button} onPress={onPressLogin} activeOpacity={0.7}>
-          <Text style={styles.buttonText}>Login</Text>
+        <TextInput
+          placeholder="Nom d'utilisateur"
+          style={styles.input}
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          placeholder="Mot de passe"
+          secureTextEntry
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Se connecter</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -68,23 +68,21 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  inner: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 32,
+  inner: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
+  avatar: { width: 100, height: 100, borderRadius: 50, marginBottom: 32 },
+  input: {
+    width: '100%',
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    marginBottom: 20,
+    padding: 10,
   },
   button: {
     backgroundColor: '#FFA037',
     paddingHorizontal: 32,
     paddingVertical: 12,
     borderRadius: 8,
+    marginTop: 12,
   },
   buttonText: {
     color: '#fff',

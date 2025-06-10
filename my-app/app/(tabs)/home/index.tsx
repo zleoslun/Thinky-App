@@ -12,12 +12,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useAuth } from '../../../src/_context/AuthContext';
+
 
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const router = useRouter();
-  const userName = 'Zabdy';
+  const { user } = useAuth();
+  const userName = user?.name || user?.email || 'friend';
+
 
   const feelings = [
     { label: 'Happy', color: '#FBCFE8', iconName: 'emoticon-happy-outline' },
@@ -41,7 +45,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
       >
