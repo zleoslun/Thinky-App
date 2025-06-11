@@ -1,7 +1,7 @@
 // app/profile.tsx
 
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const options = {
@@ -11,14 +11,16 @@ export const options = {
 
 export default function ProfileScreen() {
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView
+        style={styles.container}
+        edges={[]}>
       <View style={styles.content}>
         <Image
-          source={{ uri: 'https://i.pravatar.cc/150?img=7' }}
+          source={{ uri: 'https://i.pravatar.cc/150?img=9' }}
           style={styles.avatar}
         />
-        <Text style={styles.name}>John Doe</Text>
-        <Text style={styles.email}>john.doe@example.com</Text>
+        <Text style={styles.name}>Zabdy</Text>
+        <Text style={styles.email}>zab.dy@thinky.app</Text>
       </View>
     </SafeAreaView>
   );

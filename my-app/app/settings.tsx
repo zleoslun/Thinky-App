@@ -14,7 +14,7 @@ export default function SettingsScreen() {
   const [darkModeEnabled, setDarkModeEnabled] = React.useState(false);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={[]}>
       <View style={styles.content}>
         <View style={styles.item}>
           <Text style={styles.label}>Notifications</Text>

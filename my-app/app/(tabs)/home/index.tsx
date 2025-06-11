@@ -20,7 +20,8 @@ const { width: screenWidth } = Dimensions.get('window');
 export default function HomeScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const userName = user?.name || user?.email || 'friend';
+  const rawName = user?.name || user?.email?.split('@')[0] || 'friend';
+  const userName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
 
 
   const feelings = [
@@ -45,6 +46,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}

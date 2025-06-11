@@ -2,16 +2,15 @@
 
 import React from 'react';
 import { Stack } from 'expo-router';
-import { ChatProvider } from '../src/_context/ChatContext';
-import { NotificationsProvider } from '../src/_context/NotificationsContext';
 import { AuthProvider } from '../src/_context/AuthContext';
-
+import { NotificationsProvider } from '../src/_context/NotificationsContext';
+import { ChatProvider } from '../src/_context/ChatContext';
 
 export default function RootLayout() {
   return (
-    <NotificationsProvider>
-      <ChatProvider>
-        <AuthProvider>
+    <AuthProvider>
+      <NotificationsProvider>
+        <ChatProvider>
           <Stack>
             <Stack.Screen
               name="index"
@@ -68,11 +67,12 @@ export default function RootLayout() {
               options={{
                 headerBackTitle: 'Explore',
                 headerTitle: 'Login',
+                headerShown: false
               }}
             />
           </Stack>
-        </AuthProvider>
-      </ChatProvider>
-    </NotificationsProvider>
+        </ChatProvider>
+      </NotificationsProvider>
+    </AuthProvider>
   );
 }

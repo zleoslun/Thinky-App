@@ -24,14 +24,18 @@ export default function TabLayout() {
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.push('/explore')}>
           <Image
-            source={{ uri: 'https://i.pravatar.cc/150?img=7' }}
+            source={{ uri: 'https://i.pravatar.cc/150?img=9' }}
             style={styles.avatar}
           />
         </TouchableOpacity>
-        <Text style={styles.title}>THINKY</Text>
+        <Image
+            source={require('../../assets/images/T_writing.png')}
+            style={styles.logo}
+            resizeMode="contain"
+            />
         <TouchableOpacity onPress={() => router.push('/notifications')}>
-          <View>
-            <Ionicons name="notifications-outline" size={24} color="#000" />
+          <View >
+            <Ionicons name="notifications-outline" size={24} color="#000"/>
             {unreadCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{unreadCount}</Text>
@@ -107,5 +111,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 1,
   },
-  badgeText: { color: '#fff', fontSize: 10, fontWeight: 'bold' },
+  badgeText: { color: '#fff', fontSize: 10, fontWeight: 'bold'},
+  logo: {
+    flex: 1,
+    height: 50,
+    marginHorizontal: 12,
+    marginRight:24
+  }
 });

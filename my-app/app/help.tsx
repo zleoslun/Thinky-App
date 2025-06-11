@@ -26,7 +26,7 @@ export default function HelpScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={[]}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Help & Support</Text>
 
