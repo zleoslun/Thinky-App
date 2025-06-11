@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60,
+    marginBottom: 80,
   },
   backButton: {
     position: 'absolute',

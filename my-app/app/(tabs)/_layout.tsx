@@ -82,7 +82,7 @@ export default function TabLayout() {
         })}
       >
         <Tabs.Screen name="home" options={{ title: 'Home' }} />
-        <Tabs.Screen name="journal" />
+        <Tabs.Screen name="journal" options={{ title: 'Exam Mode' }}/>
         <Tabs.Screen name="cards" />
         <Tabs.Screen name="people" options={{ title: 'People' }} />
       </Tabs>

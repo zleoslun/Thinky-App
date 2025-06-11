@@ -29,7 +29,7 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={[]}>
       {/* NOTIFICATIONS LIST */}
       <ScrollView style={styles.notificationsContainer}>
         {notifications.map((notification) => (
@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingTop: 12,
   },
   notificationsContainer: {
     flex: 1,

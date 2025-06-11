@@ -14,7 +14,6 @@ interface Props {
 const EntryInput = ({ label, placeholder, info, value, onChangeText, onSave }: Props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
       {info && <Text style={styles.info}>{info}</Text>}
       <TextInput
         placeholder={placeholder}
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   info: {
-    fontSize: 14,
+    fontSize: 20,
     color: "#707070",
     marginVertical: 4,
   },

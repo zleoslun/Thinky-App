@@ -14,7 +14,6 @@ export default function RootLayout() {
           <Stack>
             <Stack.Screen
               name="index"
-              redirect={true}
             />
             <Stack.Screen
               name="(tabs)"
